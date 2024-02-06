@@ -1,0 +1,2104 @@
+{
+	"info": {
+		"_postman_id": "093df1e8-e4d6-4811-a75e-8bcae419f2bc",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14921972",
+		"_collection_link": "https://dark-crater-858913.postman.co/workspace/MrBuggy~ccf7c7c0-b064-4656-9f5f-cb04a0ea711d/collection/14921972-093df1e8-e4d6-4811-a75e-8bcae419f2bc?action=share&source=collection_link&creator=14921972"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "/user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response contains user list\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"    pm.response.to.have.jsonBody('Data');\r",
+									"});\r",
+									"\r",
+									"                                           //Sprawdź, czy odpowiedź zawiera oczekiwane pola dla każdego użytkownika:\r",
+									"\r",
+									"pm.test(\"Response contains expected fields for each user\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"    \r",
+									"// Przyjmując, że odpowiedź zawiera listę użytkowników w kluczu 'Data'\r",
+									"    var users = pm.response.json().Data;\r",
+									"\r",
+									"    users.forEach(function (user) {\r",
+									"        pm.expect(user).to.have.property(\"Id\");\r",
+									"        pm.expect(user).to.have.property(\"Role\");\r",
+									"        pm.expect(user).to.have.property(\"Status\");\r",
+									"        pm.expect(user).to.have.property(\"Username\");\r",
+									"        pm.expect(user).to.have.property(\"FirstName\");\r",
+									"        pm.expect(user).to.have.property(\"LastName\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"                                        //Sprawdź, czy wszystkie role są poprawne:\r",
+									"\r",
+									"pm.test(\"All roles are valid\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"    \r",
+									"    var validRoles = [\"Admin\", \"Employee\", \"Provider\"]; // Dostosuj do rzeczywistych ról\r",
+									"\r",
+									"    // Przyjmując, że odpowiedź zawiera listę użytkowników w kluczu 'Data'\r",
+									"    var users = pm.response.json().Data;\r",
+									"\r",
+									"    users.forEach(function (user) {\r",
+									"        pm.expect(validRoles).to.include(user.Role);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"                                         //Sprawdź, czy wszystkie statusy są poprawne:\r",
+									"\r",
+									"pm.test(\"All statuses are valid\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"    \r",
+									"    var validStatuses = [\"Active\", \"Blocked\"]; // Dostosuj do rzeczywistych statusów\r",
+									"\r",
+									"    // Przyjmując, że odpowiedź zawiera listę użytkowników w kluczu 'Data'\r",
+									"    var users = pm.response.json().Data;\r",
+									"\r",
+									"    users.forEach(function (user) {\r",
+									"        pm.expect(validStatuses).to.include(user.Status);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"                                     //Sprawdź, czy dane są posortowane zgodnie z oczekiwaniami:\r",
+									"\r",
+									"pm.test(\"Users are sorted by Id in descending order\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"    \r",
+									"    // Przyjmując, że odpowiedź zawiera listę użytkowników w kluczu 'Data'\r",
+									"    var users = pm.response.json().Data;\r",
+									"    \r",
+									"    for (var i = 0; i < users.length - 1; i++) {\r",
+									"        pm.expect(users[i].Id).to.be.gte(users[i + 1].Id);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Sprawdź, czy odpowiedź zawiera dane zalogowanego administratora\r",
+									"pm.test(\"Response contains logged-in administrator data\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"    \r",
+									"    var adminData = pm.response.json().Data; // Skrócona ścieżka do danych administratora\r",
+									"\r",
+									"    pm.expect(adminData).to.eql({\r",
+									"        Id: 1,\r",
+									"        Role: 'Admin',\r",
+									"        Status: 'Active',\r",
+									"        Username: 'admin',\r",
+									"        FirstName: 'First',\r",
+									"        LastName: 'Admin',\r",
+									"        PhoneNumber: '',\r",
+									"        Email: ''\r",
+									"    }); // Oczekiwane dane administratora\r",
+									"\r",
+									"    // Sprawdź, czy pole Success istnieje i ma wartość różną od false\r",
+									"    pm.response.to.have.jsonBody('Success').that.is.not.eql(false); \r",
+									"});\r",
+									"\r",
+									"\r",
+									"// 2. Sprawdź, czy zalogowany administrator nie ma przypisanej jednostki (unit_id) lub dostawcy (provider_id)\r",
+									"pm.test(\"Logged-in administrator does not have associated unit or provider\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"    pm.response.to.not.have.jsonBody('Data.unit_id'); // Oczekiwane, że unit_id nie jest obecne\r",
+									"    pm.response.to.not.have.jsonBody('Data.provider_id'); // Oczekiwane, że provider_id nie jest obecne\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"// 3. Sprawdź, czy zalogowany administrator ma poprawny status (Active)\r",
+									"pm.test(\"Logged-in administrator has a valid status\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"    pm.expect(pm.response.json().Data.Status).to.eql('Active'); // Oczekiwany status 'Active'\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/profile/id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/employee",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;\r",
+									"\r",
+									"const generateFirstName = () => {\r",
+									"    const firstName = `FirstName${getRandomNumber(1, 100)}`;\r",
+									"    return firstName.replace(/\\d/g, ''); \r",
+									"};\r",
+									"\r",
+									"const generateLastName = () => {\r",
+									"    const lastName = `LastName${getRandomNumber(1, 100)}`;\r",
+									"    return lastName.replace(/\\d/g, ''); \r",
+									"};\r",
+									"\r",
+									"const generateUsername = () => `User${getRandomNumber(1, 100)}`;\r",
+									"\r",
+									"const generateEmail = () => `user${getRandomNumber(1, 100)}@example.com`;\r",
+									"\r",
+									"const generatePhoneNumber = () => `+1 555-${getRandomNumber(100, 999)}-${getRandomNumber(1000, 9999)}`;\r",
+									"\r",
+									"const generatePassword = () => `Password${getRandomNumber(1, 100)}!@#`;\r",
+									"\r",
+									"const unitList = [\r",
+									"    { \"Id\": 1, \"Name\": \"1\" },\r",
+									"    { \"Id\": 6, \"Name\": \"ZAAB\" },\r",
+									"    { \"Id\": 10, \"Name\": \"ZABBBB\" },\r",
+									"    { \"Id\": 11, \"Name\": \"ZABBBBB\" },\r",
+									"    { \"Id\": 12, \"Name\": \"6\" },\r",
+									"    { \"Id\": 18, \"Name\": \"NewPp\" },\r",
+									"    { \"Id\": 19, \"Name\": \"NewPpp\" },\r",
+									"    { \"Id\": 27, \"Name\": \"Unit13\" },\r",
+									"    { \"Id\": 29, \"Name\": \"Unit1\" },\r",
+									"    { \"Id\": 30, \"Name\": \"Unit3\" },\r",
+									"    { \"Id\": 31, \"Name\": \"Unit5\" },\r",
+									"    { \"Id\": 32, \"Name\": \"Unit15\" }\r",
+									"];\r",
+									"\r",
+									"const generateUnitId = () => {\r",
+									"    const existingUnitIds = pm.environment.get(\"existingUnitIds\") || [];\r",
+									"\r",
+									"    const availableUnits = unitList.filter(unit => !existingUnitIds.includes(unit.Id));\r",
+									"\r",
+									"    if (availableUnits.length === 0) {\r",
+									"        console.error(\"No available units. Resetting existingUnitIds.\");\r",
+									"        pm.environment.set(\"existingUnitIds\", []);\r",
+									"        return generateUnitId(); // Retry with a cleared list\r",
+									"    }\r",
+									"\r",
+									"    const selectedUnit = availableUnits[getRandomNumber(0, availableUnits.length - 1)];\r",
+									"\r",
+									"    existingUnitIds.push(selectedUnit.Id);\r",
+									"    pm.environment.set(\"existingUnitIds\", existingUnitIds);\r",
+									"\r",
+									"    return selectedUnit.Id;\r",
+									"};\r",
+									"\r",
+									"const generateEmployee = () => {\r",
+									"    const unitId = generateUnitId();\r",
+									"    const employee = {\r",
+									"        firstName: generateFirstName(),\r",
+									"        lastName: generateLastName(),\r",
+									"        userName: generateUsername(),\r",
+									"        userEmail: generateEmail(),\r",
+									"        phoneNumber: generatePhoneNumber(),\r",
+									"        userPassword: generatePassword(),\r",
+									"        unitId: unitId,\r",
+									"    };\r",
+									"    return employee;\r",
+									"};\r",
+									"\r",
+									"// Ustawienie zmiennych środowiskowych dla nowego pracownika\r",
+									"const newEmployee = generateEmployee();\r",
+									"pm.environment.set(\"firstName\", newEmployee.firstName);\r",
+									"pm.environment.set(\"lastName\", newEmployee.lastName);\r",
+									"pm.environment.set(\"userName\", newEmployee.userName);\r",
+									"pm.environment.set(\"userEmail\", newEmployee.userEmail);\r",
+									"pm.environment.set(\"phoneNumber\", newEmployee.phoneNumber);\r",
+									"pm.environment.set(\"userPassword\", newEmployee.userPassword);\r",
+									"pm.environment.set(\"unitId\", newEmployee.unitId);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 200 Created\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"var response = pm.sendRequest(request);\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response contains expected fields for a user\", function () {\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"\r",
+									"    var user = pm.response.json().Data;\r",
+									"\r",
+									"    pm.expect(user).to.have.property(\"Id\");\r",
+									"    pm.expect(user).to.have.property(\"Role\").eql(\"Employee\");\r",
+									"    pm.expect(user).to.have.property(\"Status\").eql(\"Active\");\r",
+									"    pm.expect(user).to.have.property(\"Unit\");\r",
+									"    pm.expect(user.Unit).to.have.property(\"Id\").within(1, 33);\r",
+									"    pm.expect(user).to.have.property(\"Username\").match(/User\\d+/);\r",
+									"    pm.expect(user).to.have.property(\"FirstName\").match(/FirstName/);\r",
+									"    pm.expect(user).to.have.property(\"LastName\").match(/LastName/); // Zmieniono warunek na sprawdzenie jedynie tekstu w \"LastName\"\r",
+									"    pm.expect(user).to.have.property(\"PhoneNumber\").match(/^\\+[\\d\\s-]+$/);\r",
+									"    pm.expect(user).to.have.property(\"Email\").match(/user\\d+@example.com/);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has 'Success' property set to true\", function () {\r",
+									"    // Ensure that the response body is a valid JSON\r",
+									"    pm.response.to.have.jsonBody();\r",
+									"\r",
+									"    // Check the 'Success' property without repeating the 'jsonBody' assertion\r",
+									"    pm.expect(pm.response.json().Success).to.eql(true);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "first_name",
+									"value": "{{firstName}}",
+									"type": "text"
+								},
+								{
+									"key": "last_name",
+									"value": "{{lastName}}",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{userName}}",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{userEmail}}",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "{{phoneNumber}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{userPassword}}",
+									"type": "text"
+								},
+								{
+									"key": "unit_id",
+									"value": "{{unitId}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/employee",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"employee"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 Created\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;\r",
+									"\r",
+									"const generateFirstName = () => {\r",
+									"    // Wprowadź zmiany, aby spełnić wymagania serwera\r",
+									"    const firstName = `FirstName${getRandomNumber(1, 100)}`;\r",
+									"    return firstName.replace(/\\d/g, ''); // Usuń cyfry\r",
+									"};\r",
+									"\r",
+									"const generateLastName = () => {\r",
+									"    // Wprowadź zmiany, aby spełnić wymagania serwera\r",
+									"    const lastName = `LastName${getRandomNumber(1, 100)}`;\r",
+									"    return lastName.replace(/\\d/g, ''); // Usuń cyfry\r",
+									"};\r",
+									"\r",
+									"const generateUsername = () => `User${getRandomNumber(1, 100)}`;\r",
+									"\r",
+									"const generateEmail = () => `user${getRandomNumber(1, 100)}@example.com`;\r",
+									"\r",
+									"const generatePhoneNumber = () => `+1 555-${getRandomNumber(100, 999)}-${getRandomNumber(1000, 9999)}`;\r",
+									"\r",
+									"const generatePassword = () => `Password${getRandomNumber(1, 100)}!@#`; // Dodaj jeden znak specjalny\r",
+									"\r",
+									"// Funkcja generująca unikalny identyfikator jednostki na zmianę\r",
+									"const generateUnitId = () => {\r",
+									"    const existingUnitIds = pm.environment.get(\"existingUnitIds\") || []; // Pobierz już używane identyfikatory jednostek\r",
+									"\r",
+									"    let newUnitId;\r",
+									"    do {\r",
+									"        newUnitId = getRandomNumber(1, 19);\r",
+									"    } while (existingUnitIds.includes(newUnitId));\r",
+									"\r",
+									"    // Dodaj nowy identyfikator do listy używanych\r",
+									"    existingUnitIds.push(newUnitId);\r",
+									"    pm.environment.set(\"existingUnitIds\", existingUnitIds);\r",
+									"\r",
+									"    return newUnitId;\r",
+									"};\r",
+									"\r",
+									"pm.environment.set(\"unitId\", generateUnitId());\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.environment.set(\"firstName\", generateFirstName());\r",
+									"pm.environment.set(\"lastName\", generateLastName());\r",
+									"pm.environment.set(\"userName\", generateUsername());\r",
+									"pm.environment.set(\"userEmail\", generateEmail());\r",
+									"pm.environment.set(\"phoneNumber\", generatePhoneNumber());\r",
+									"pm.environment.set(\"userPassword\", generatePassword());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "first_name",
+									"value": "{{firstName}}",
+									"type": "text"
+								},
+								{
+									"key": "last_name",
+									"value": "{{lastName}}",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{userName}}",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{userEmail}}",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "{{phoneNumber}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{userPassword}}",
+									"type": "text"
+								},
+								{
+									"key": "unit_id",
+									"value": "{{unitId}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/admin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/provider",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 Created\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;\r",
+									"\r",
+									"const generateFirstName = () => {\r",
+									"    const firstName = `FirstName${getRandomNumber(1, 100)}`;\r",
+									"    return firstName.replace(/\\d/g, '');\r",
+									"};\r",
+									"\r",
+									"const generateLastName = () => {\r",
+									"    const lastName = `LastName${getRandomNumber(1, 100)}`;\r",
+									"    return lastName.replace(/\\d/g, '');\r",
+									"};\r",
+									"\r",
+									"const generateUsername = () => `User${getRandomNumber(1, 100)}`;\r",
+									"\r",
+									"const generateEmail = () => `user${getRandomNumber(1, 100)}@example.com`;\r",
+									"\r",
+									"const generatePhoneNumber = () => `+1 555-${getRandomNumber(100, 999)}-${getRandomNumber(1000, 9999)}`;\r",
+									"\r",
+									"const generatePassword = () => `Password${getRandomNumber(1, 100)}!@#`;\r",
+									"\r",
+									"const generateUnitId = () => {\r",
+									"    const existingUnitIds = pm.environment.get(\"existingUnitIds\") || [];\r",
+									"    const newUnitId = getRandomNumber(1, 19);\r",
+									"    \r",
+									"    let providerId = getRandomNumber(3, 4, 9); // Zakładam, że provider_id jest kolejnym numerem z zakresu 1-10\r",
+									"\r",
+									"    // Dodaj nowy identyfikator do listy używanych\r",
+									"    existingUnitIds.push(newUnitId);\r",
+									"    pm.environment.set(\"existingUnitIds\", existingUnitIds);\r",
+									"\r",
+									"    return `${newUnitId}-${providerId}`; // Połącz identyfikator jednostki z provider_id\r",
+									"};\r",
+									"\r",
+									"pm.environment.set(\"unitId\", generateUnitId());\r",
+									"pm.environment.set(\"firstName\", generateFirstName());\r",
+									"pm.environment.set(\"lastName\", generateLastName());\r",
+									"pm.environment.set(\"userName\", generateUsername());\r",
+									"pm.environment.set(\"userEmail\", generateEmail());\r",
+									"pm.environment.set(\"phoneNumber\", generatePhoneNumber());\r",
+									"pm.environment.set(\"userPassword\", generatePassword());\r",
+									"\r",
+									"// Ustaw również provider_id w środowisku, aby było dostępne dla testów\r",
+									"pm.environment.set(\"providerId\", generateUnitId().split('-')[1]);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "first_name",
+									"value": "{{firstName}}",
+									"type": "text"
+								},
+								{
+									"key": "last_name",
+									"value": "{{lastName}}",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{userName}}",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{userEmail}}",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "{{phoneNumber}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{userPassword}}",
+									"type": "text"
+								},
+								{
+									"key": "provider_id",
+									"value": "{{providerId}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/provider",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"provider"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Dane aktualnego użytkownika zaktualizowane pomyślnie\", function () {\r",
+									"    const expectedUpdatedUserData = {\r",
+									"        \"Id\": 25,\r",
+									"        \"Role\": \"Employee\",\r",
+									"        \"Status\": \"Active\",\r",
+									"        \"Unit\": {\"Id\": 1},\r",
+									"        \"Username\": \"nowyusernam\",\r",
+									"        \"FirstName\": \"NoweImie\",\r",
+									"        \"LastName\": \"NoweNazwisko\",\r",
+									"        \"PhoneNumber\": \"587652325\",\r",
+									"        \"Email\": \"nowyemaillllllllll@example.com\",\r",
+									"        \"Success\": true\r",
+									"    };\r",
+									"\r",
+									"    const actualUserData = pm.response.json().Data;\r",
+									"\r",
+									"    // Check if the Success property exists in actual data\r",
+									"    if ('Success' in actualUserData) {\r",
+									"        // Compare Success property if it exists\r",
+									"        pm.expect(actualUserData.Success).to.eql(expectedUpdatedUserData.Success);\r",
+									"    } else {\r",
+									"        // Handle the case where Success property is not present in actual data\r",
+									"        console.error('Success property is not present in actual data');\r",
+									"        // You may choose to skip this assertion or handle it based on your requirements\r",
+									"    }\r",
+									"\r",
+									"    // Porównaj tylko te właściwości, które są ważne dla testu\r",
+									"    // pm.expect(actualUserData.Id).to.eql(expectedUpdatedUserData.Id);\r",
+									"    // pm.expect(actualUserData.Role).to.eql(expectedUpdatedUserData.Role);\r",
+									"    // pm.expect(actualUserData.Status).to.eql(expectedUpdatedUserData.Status);\r",
+									"    // pm.expect(actualUserData.Unit.Id).to.eql(expectedUpdatedUserData.Unit.Id);\r",
+									"    // pm.expect(actualUserData.Username).to.eql(expectedUpdatedUserData.Username);\r",
+									"    // pm.expect(actualUserData.FirstName).to.eql(expectedUpdatedUserData.FirstName);\r",
+									"    // pm.expect(actualUserData.LastName).to.eql(expectedUpdatedUserData.LastName);\r",
+									"    // pm.expect(actualUserData.PhoneNumber).to.eql(expectedUpdatedUserData.PhoneNumber);\r",
+									"    // pm.expect(actualUserData.Email).to.eql(expectedUpdatedUserData.Email);\r",
+									"    // Continue with other property comparisons...\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "first_name",
+									"value": "NoweImie",
+									"type": "text"
+								},
+								{
+									"key": "last_name",
+									"value": "NoweNazwisko",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "nowyusernam",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "nowyemaillllllllll@example.com",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "587652325",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "NoweHaslo3333!",
+									"type": "text"
+								},
+								{
+									"key": "unit_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/29",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"29"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/Login user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Zmodyfikuj dane zalogowanego użytkownika (przykład dla roli Employee)\r",
+									"var requestProfile = {\r",
+									"    method: 'PUT',\r",
+									"    url: 'http://localhost:8080/user/profile',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            'first_name': 'NoweImieProfil',\r",
+									"            'last_name': 'NoweNazwiskoProfil',\r",
+									"            'username': 'nowyusernameprofil',\r",
+									"            'email': 'nowyemailprofil@example.com',\r",
+									"            'phone_number': '987654321',\r",
+									"            'password': 'NoweHaslo123',\r",
+									"            'unit_id': '3' // Zależy od roli użytkownika, można dostosować do swoich potrzeb\r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"var responseProfile = pm.sendRequest(requestProfile);\r",
+									"\r",
+									"// Sprawdź, czy odpowiedź potwierdza zmianę danych zalogowanego użytkownika\r",
+									"pm.test(\"Response confirms logged-in user data change\", function () {\r",
+									"    pm.response.to.be.ok; // Upewnij się, że otrzymaliśmy odpowiedź zwrotną\r",
+									"    pm.response.to.not.have.jsonBody('Errors'); // Sprawdź, czy nie ma żadnych błędów w odpowiedzi\r",
+									"    pm.response.to.have.jsonBody('Success').eql(true); // Sprawdź, czy operacja zakończona sukcesem\r",
+									"});\r",
+									"\r",
+									"// Dodaj inne testy, takie jak sprawdzanie unikalności username, email itp."
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "first_name",
+									"value": "NoweImieProfil",
+									"type": "text"
+								},
+								{
+									"key": "last_name",
+									"value": "NoweNazwiskoProfil",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "nowyusernameprofil",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "nowyemailprofil@example.com",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "987654321",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "NoweHaslo123",
+									"type": "text"
+								},
+								{
+									"key": "unit_id",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/3/active",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"3",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code should be 200 OK",
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Validate the response JSON structure",
+									"pm.test(\"Response has the correct structure\", function () {",
+									"    pm.response.to.have.jsonBody({",
+									"        \"Data\": {",
+									"            \"Id\": 50,",
+									"            \"Role\": \"Employee\",",
+									"            \"Status\": \"Deleted\"",
+									"        },",
+									"        \"Success\": true",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/69",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"69"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "unit",
+			"item": [
+				{
+					"name": "/unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains Data and Success fields\", function () {\r",
+									"    pm.response.to.have.jsonBody(\"Data\");\r",
+									"    pm.response.to.have.jsonBody(\"Success\", true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/unit",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"unit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains Data and Success fields\", function () {\r",
+									"    pm.response.to.have.jsonBody(\"Data\");\r",
+									"    pm.response.to.have.jsonBody(\"Success\", true);\r",
+									"});\r",
+									"\r",
+									"//Verify Response Time\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"New unit name is correct in the response\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    if (responseData && responseData.Data) {\r",
+									"        const expectedName = pm.environment.get(\"unitName\");\r",
+									"        pm.expect(responseData.Data).to.have.property(\"Name\", expectedName);\r",
+									"    } else {\r",
+									"        pm.expect.fail(\"Response Data or Success field not found\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;\r",
+									"\r",
+									"const generateUnitId = () => getRandomNumber(1, 19);\r",
+									"\r",
+									"// Get existing unit names from the environment\r",
+									"const existingUnitNames = pm.environment.get(\"existingUnitNames\") || [];\r",
+									"\r",
+									"if (!pm.environment.has(\"unitName\")) {\r",
+									"    let unitId;\r",
+									"    let unitName;\r",
+									"    do {\r",
+									"        unitId = generateUnitId();\r",
+									"        unitName = `Unit${unitId}`;\r",
+									"    } while (existingUnitNames.includes(unitName));\r",
+									"\r",
+									"    // Add the new name to the list of used names\r",
+									"    existingUnitNames.push(unitName);\r",
+									"\r",
+									"    // Update environment variables\r",
+									"    pm.environment.set(\"unitId\", unitId);\r",
+									"    pm.environment.set(\"unitName\", unitName);\r",
+									"    pm.environment.set(\"existingUnitNames\", existingUnitNames);\r",
+									"}\r",
+									"\r",
+									"const requestBody = {\r",
+									"    \"name\": pm.environment.get(\"unitName\")\r",
+									"    // Add other fields according to the server requirements\r",
+									"};\r",
+									"\r",
+									"pm.environment.set(\"postUnitRequestBody\", JSON.stringify(requestBody));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{unitName}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/unit",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"unit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/unit/id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains Data and Success fields\", function () {\r",
+									"    pm.response.to.have.jsonBody(\"Data\");\r",
+									"    pm.response.to.have.jsonBody(\"Success\", true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "NEWUNIT",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/unit/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"unit",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains Data and Success fields\", function () {\r",
+									"    pm.response.to.have.jsonBody(\"Data\");\r",
+									"    pm.response.to.have.jsonBody(\"Success\", true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/unit/33",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"unit",
+								"33"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "provider",
+			"item": [
+				{
+					"name": "/provider",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains Data and Success fields\", function () {\r",
+									"    pm.response.to.have.jsonBody(\"Data\");\r",
+									"    pm.response.to.have.jsonBody(\"Success\", true);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has provider data structure\", function () {\r",
+									"    pm.response.to.have.jsonBody(\"Data[0].Id\");\r",
+									"    pm.response.to.have.jsonBody(\"Data[0].Name\");\r",
+									"    pm.response.to.have.jsonBody(\"Data[0].Price\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/provider",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"provider"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/provider",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Response contains Data and Success fields', function () {",
+									"    pm.response.to.have.jsonBody('Data');",
+									"    pm.response.to.have.jsonBody('Success', true);",
+									"})",
+									"",
+									"",
+									"",
+									"pm.test(\"New provider is added with correct data\", function () {",
+									"    const responseData = pm.response.json().Data;",
+									"    ",
+									"    pm.expect(responseData).to.have.property(\"Name\", pm.environment.get(\"providerName\"));",
+									"    pm.expect(responseData).to.have.property(\"Price\", pm.environment.get(\"providerPrice\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Funkcja generująca losową liczbę w zakresie\r",
+									"const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;\r",
+									"\r",
+									"// Funkcja generująca unikalny identyfikator dostawcy\r",
+									"const generateProviderId = () => {\r",
+									"    const existingProviderIds = pm.environment.get(\"existingProviderIds\") || [];\r",
+									"\r",
+									"    let newProviderId;\r",
+									"    do {\r",
+									"        newProviderId = getRandomNumber(1, 50);\r",
+									"    } while (existingProviderIds.includes(newProviderId));\r",
+									"\r",
+									"    // Add the new ID to the list of used IDs\r",
+									"    existingProviderIds.push(newProviderId);\r",
+									"    \r",
+									"    // Update environment variable\r",
+									"    pm.environment.set(\"existingProviderIds\", existingProviderIds);\r",
+									"\r",
+									"    return newProviderId;\r",
+									"};\r",
+									"\r",
+									"// Funkcja generująca unikalną nazwę dostawcy\r",
+									"const generateProviderName = () => `Provider${generateProviderId()}`;\r",
+									"\r",
+									"// Funkcja generująca losową cenę dostawcy\r",
+									"const generateProviderPrice = () => getRandomNumber(10, 100);\r",
+									"\r",
+									"// Ustaw zmienne środowiskowe dla danych dostawcy\r",
+									"pm.environment.set(\"providerName\", generateProviderName());\r",
+									"pm.environment.set(\"providerPrice\", generateProviderPrice());\r",
+									"\r",
+									"// Ustaw dane do zapytania POST w środowisku\r",
+									"pm.environment.set(\"postProviderRequestBody\", JSON.stringify({\r",
+									"    \"name\": pm.environment.get(\"providerName\"),\r",
+									"    \"price\": pm.environment.get(\"providerPrice\")\r",
+									"    // Dodaj inne pola zgodnie z wymaganiami serwera\r",
+									"}));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{providerName}}",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "{{providerPrice}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/provider",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"provider"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/provider/id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains Data and Success fields\", function () {",
+									"    pm.response.to.have.jsonBody(\"Data\");",
+									"    pm.response.to.have.jsonBody(\"Success\", true);",
+									"});",
+									"",
+									"pm.test(\"Provider data is updated with correct values\", function () {",
+									"    pm.expect(pm.response.json().Data[0].Name).to.equal(\"UpdatedProvider\");",
+									"    pm.expect(pm.response.json().Data[0].Price).to.equal(2000.0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "NewPpp",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "15121",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/provider",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"provider"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/provider",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Fixed syntax\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains Data and Success fields\", function () {\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"Data\");\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"Success\", true);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Usunięcie dostawcy powiodło się\", function () {\r",
+									"    pm.sendRequest({\r",
+									"        url: `${pm.environment.get(\"base_url\")}/provider/valid_provider_id`,\r",
+									"        method: 'GET',\r",
+									"    }, function (response) {\r",
+									"        console.log(response); // Opcjonalne: zaloguj obiekt odpowiedzi do konsoli Postman\r",
+									"        pm.expect(response).to.have.property('code');\r",
+									"        pm.expect(response.code).to.equal(404);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/provider/8",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"provider",
+								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cr",
+			"item": [
+				{
+					"name": "/cr",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cr",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cr"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/cr",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "number",
+									"value": "CR12112",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Change Request Example",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Description of the change request.",
+									"type": "text"
+								},
+								{
+									"key": "reason",
+									"value": "Reason for the change",
+									"type": "text"
+								},
+								{
+									"key": "financial_sources",
+									"value": "Source of funding for the change",
+									"type": "text"
+								},
+								{
+									"key": "provider_id",
+									"value": "4",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cr",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cr"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/cr Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "number",
+									"value": "NowyNumerCR",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "NowaNazwaCR",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "NowyOpisCR",
+									"type": "text"
+								},
+								{
+									"key": "reason",
+									"value": "NowyPowodC",
+									"type": "text"
+								},
+								{
+									"key": "financial_sources",
+									"value": "NoweZrodloFinansowaniaCR",
+									"type": "text"
+								},
+								{
+									"key": "provider_id",
+									"value": "4",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cr/11/clone",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cr",
+								"11",
+								"clone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/cr Copy 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "number",
+									"value": "NowyNumerCR",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "NowaNazwaCR",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "description",
+									"value": "NowyOpisCR",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "reason",
+									"value": "NowyPowodC",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "financial_sources",
+									"value": "NoweZrodloFinansowaniaCR",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "provider_id",
+									"value": "4",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "content",
+									"value": "wefwe",
+									"type": "text"
+								},
+								{
+									"key": "private",
+									"value": "false",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cr/11/clomment",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cr",
+								"11",
+								"clomment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/cr/id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{username}}:{{password}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "number",
+									"value": "CR123",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Change Request Example",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Description of the change request.",
+									"type": "text"
+								},
+								{
+									"key": "reason",
+									"value": "Reason for the change",
+									"type": "text"
+								},
+								{
+									"key": "financial_sources",
+									"value": "Source of funding for the change",
+									"type": "text"
+								},
+								{
+									"key": "provider_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cr/9",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cr",
+								"9"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "userName",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "userEmail",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "firstName",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "phoneNumber",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "userPassword",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "unitId",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "providerId",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "lastName",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}
